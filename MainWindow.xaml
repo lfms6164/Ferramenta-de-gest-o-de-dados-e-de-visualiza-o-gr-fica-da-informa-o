@@ -1,0 +1,31 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="" Height="450" Width="900" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Label Content="Nome" HorizontalAlignment="Left" Margin="41,11,0,0" VerticalAlignment="Top"/>
+        <Label Content="Número" HorizontalAlignment="Left" Margin="41,51,0,0" VerticalAlignment="Top"/>
+        <Label Content="Distrito" HorizontalAlignment="Left" Margin="41,91,0,0" VerticalAlignment="Top"/>
+        <Label Content="Concelho" HorizontalAlignment="Left" Margin="41,131,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="lbDg" Content="Dados Guardados" HorizontalAlignment="Left" Margin="10,383,0,0" VerticalAlignment="Top" Foreground="#FF3D8F0F" FontWeight="Bold" Visibility="Hidden"/>
+        <TextBox x:Name="tbNome" HorizontalAlignment="Left" Margin="131,16,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170"/>
+        <TextBox x:Name="tbNum" HorizontalAlignment="Left" Margin="131,56,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="170"/>
+        <ComboBox x:Name="cbDistrito" HorizontalAlignment="Left" Margin="131,96,0,0" VerticalAlignment="Top" Width="170" SelectionChanged="cbDistrito_SelectionChanged"/>
+        <ComboBox x:Name="cbConcelho" HorizontalAlignment="Left" Margin="131,136,0,0" VerticalAlignment="Top" Width="170" SelectionChanged="cbConcelho_SelectionChanged"/>
+        <Button x:Name="btnGuardar" Content="Guardar" HorizontalAlignment="Left" Margin="41,201,0,0" VerticalAlignment="Top" Height="30" Width="60" Click="btnGuardar_Click"/>
+        <Button x:Name="btnLer" Content="Ler" HorizontalAlignment="Left" Margin="141,201,0,0" VerticalAlignment="Top" Height="30" Width="60" Click="btnLer_Click"/>
+        <Button x:Name="btnSair" Content="Sair" HorizontalAlignment="Left" Margin="241,201,0,0" VerticalAlignment="Top" Height="30" Width="60" Click="btnSair_Click"/>
+        <DataGrid x:Name="DataGrid" Margin="332,10,10,10" Width="550" CanUserResizeRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Nome" Width="125" Binding="{Binding Nome}"/>
+                <DataGridTextColumn Header="Número" Width="125" Binding="{Binding Num}"/>
+                <DataGridTextColumn Header="Distrito" Width="125" Binding="{Binding Distrito}"/>
+                <DataGridTextColumn Header="Concelho" Width="175" Binding="{Binding Concelho}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
