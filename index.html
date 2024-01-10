@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+
+        <title>Projeto Lab</title>
+
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" type="text/css" href="leaflet/L.Control.MousePosition.css">
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>
+        <link rel="stylesheet" type="text/css" href="leaflet/leaflet.zoomhome.css">
+        <link rel="stylesheet" type="text/css" href="leaflet/L.Control.ZoomBox.css">
+        <link rel="stylesheet" type="text/css" href="leaflet/leaflet.css">
+
+        <script src="leaflet/leaflet.js"></script>
+        <script src="leaflet/L.Control.MousePosition.js"></script>
+        <script src="leaflet/L.Control.ZoomBox.min.js"></script>
+        <script src="leaflet/leaflet.zoomhome.min.js"></script>
+        <script src="dados/distritoslayer.json"></script>
+        <script src="dados/concelhoslayer.json"></script>
+    </head>
+
+    <body>
+        <div class="mapParent">
+            <div id="map" class="map"></div>
+		</div>
+		<script>
+          
+//------------------------------------------------------------------------------   
+         		
+            var map = L.map('map', {
+                zoomControl: false,
+				zoom: 7,
+				center: [40.11, -7.93],
+				maxBounds: [{lat: 44.74, lng: 0.50} , {lat: 35.13, lng: -16.32}]
+            });
+        
+            map.createPane("distritos").style.zIndex = 201;
+            map.createPane("concelhos").style.zIndex = 202;
+
+            // Creating a marker
+            var marker = L.marker([41.28673, -7.74086]);
+         
+            // Adding marker to the map
+            //marker.addTo(map);
+
+            // Adding pop-up to the marker
+            marker.bindPopup('UTAD');
+
+//------------------------------------------------------------------------------            
+            
+			var osmBasemap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+				{
+			attribution: "&copy; <a href='https://www.openstreetmap.org/copyright' title='Basemap provider'>OpenStreetMap</a> ",
+			noWrap: true
+			}).addTo(map);
+			
+            var EsriBasemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            });
+            
+//------------------------------------------------------------------------------
+
+            var style = {
+                color: "#1f78b4"
+            }
+
+            var highlight = {
+                color: 'red'
+                
+            };
+
+            var distritoslayerJson =  L.geoJSON(distritoslayer, {
+                onEachFeature: function (feature, layer) {
+                    
+                    var distrito = feature.properties.NOME;
+                    var numD = feature.properties.NUM_D;
+                    layer.bindPopup("<b>Distrito: </b>" + distrito
+                                    + "<br>" + "<b>Nº alunos: </b>" + numD
+                    );
+                    layer.bindTooltip(distrito);
+                    layer.on('click', function(e) {
+                        distritoslayerJson.setStyle(style);
+                        layer.setStyle(highlight);
+                        
+                    });
+                    map.on('click', function(e) {
+                        distritoslayerJson.setStyle(style);
+                    });
+                },
+                pane: "distritos"
+            }); 
+
+            var concelhoslayerJson =  L.geoJSON(concelhoslayer, {
+                onEachFeature: function (feature, layer) {
+                    
+                    var concelho = feature.properties.NOME_C;
+                    var numC = feature.properties.NUM_C;
+                    layer.bindPopup("<b>Concelho: </b>" + concelho
+                                    + "<br>" + "<b>Nº alunos: </b>" + numC
+                    );
+                    layer.bindTooltip(concelho);
+                    layer.on('click', function(e) {
+                        concelhoslayerJson.setStyle(style);
+                        layer.setStyle(highlight);
+                        layer.bringToFront();
+                    });
+                    map.on('click', function(e) {
+                        concelhoslayerJson.setStyle(style);
+                    });
+                },
+                pane: "concelhos"
+            });
+
+//------------------------------------------------------------------------------
+            
+            var zoomHome = L.Control.zoomHome().addTo(map);
+            
+            var showCoordinates = L.control.mousePosition().addTo(map);
+            
+            var zoomBox = L.control.zoomBox().addTo(map);
+            
+			var escala = L.control.scale({imperial: false}).addTo(map);
+            
+            var basemaps = {
+            "Terreno": osmBasemap,
+            "Satélite": EsriBasemap
+            }
+            
+            var overlays = {
+                //"UTAD": marker,
+                "Distritos": distritoslayerJson,
+                "Concelhos": concelhoslayerJson
+            }
+            
+
+            var layerControl = L.control.layers(basemaps, overlays, {
+                collapsed: false
+            }).addTo(map);
+
+//------------------------------------------------------------------------------
+			
+            map.on('zoomend', function() 
+            {
+                var zoom = map.getZoom();
+                
+                if (zoom >= 8)
+                {
+                    map.addLayer(distritoslayerJson);
+                    if (zoom >= 9)
+                    {
+                        map.addLayer(concelhoslayerJson);
+                    }
+                }
+
+                if (zoom < 9)
+                {
+                    map.removeLayer(concelhoslayerJson);
+                    if (zoom < 8)
+                    {
+                        map.removeLayer(distritoslayerJson);  
+                    }
+                }
+            });
+
+//------------------------------------------------------------------------------
+            
+		</script>
+    </body>
+</html>
